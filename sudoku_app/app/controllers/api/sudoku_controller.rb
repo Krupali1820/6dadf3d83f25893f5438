@@ -15,8 +15,9 @@ class Api::SudokuController < ApplicationController
 		(0...9).each do |x|
 			(0...3).each do |i|
 				(0...3).each do |j|
-					if chunks[x][i][j] == 0 #&&  chunks[x].all?{|row| has_nine_unique_elements?(row) } && chunks[x].all?{|column| has_nine_unique_elements?(column) }
+					if chunks[x][i][j] == 0 chunks[x].all?{|row| has_three_unique_elements?(row) } && chunks[x].all?{|column| has_three_unique_elements?(column) }
 						chunks[x][i][j] = rand(1..9)
+
 					end 				
 				end
 			end
@@ -27,6 +28,17 @@ class Api::SudokuController < ApplicationController
 		else
 			render :json => {message: "invalid sudoku"}
 		end
+	end
+
+	def has_three_unique_elements?(arr)
+		sudoku_game.flatten(1).uniq.size == 3
+	end
+
+	def valid_matrix?(sudoku_game)
+	  has_three_unique_elements?(sudoku_game) &&
+	  sudoku_game.all?{|row| has_three_unique_elements?(row) } &&
+	  sudoku_game.all?{|column| has_three_unique_elements?(column) } &&
+	  extract_chunks(sudoku_game).all?{|chunk| has_nine_three_elements?(chunk) }
 	end
 
 	def has_nine_unique_elements?(sudoku_game)
