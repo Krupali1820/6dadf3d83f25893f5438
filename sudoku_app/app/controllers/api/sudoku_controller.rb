@@ -12,11 +12,13 @@ class Api::SudokuController < ApplicationController
 		chunks = two_d_array.each_slice(3).map{|stripe| stripe.transpose.each_slice(3).map{|chunk| chunk.transpose}}.flatten(1)
 
 		#iterate 3x3 chunk and add number from 1-9 
-		(0...3).each do |i|
-			(0...3).each do |j|
-				if chunks[0] == 0
-					chunks[0][i][j] = rand(1..9)
-				end 				
+		(0...9).each do |x|
+			(0...3).each do |i|
+				(0...3).each do |j|
+					if chunks[x][i][j] == 0 #&&  chunks[x].all?{|row| has_nine_unique_elements?(row) } && chunks[x].all?{|column| has_nine_unique_elements?(column) }
+						chunks[x][i][j] = rand(1..9)
+					end 				
+				end
 			end
 		end
 		result = valid_sudoku?(two_d_array)
